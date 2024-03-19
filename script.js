@@ -1,29 +1,11 @@
 //homeWork 2.9
+
 //main variables
 const writeComment = document.getElementById("comment-btn");
 const listComment = document.getElementById("comments-list");
 const typeUserName = document.getElementById("user-name");
 const typeUserComment = document.getElementById("user-comment");
 const likeNumbers = 0;
-//
-
-//comment date & time function
-function getCommentDate() {
-  const dateOptions = {
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-
-  const commentTime = new Date()
-    .toLocaleDateString("ru-RU", dateOptions)
-    .split(",")
-    .join("");
-
-  return commentTime;
-}
 //
 
 //main comment add function
@@ -62,22 +44,38 @@ writeComment.addEventListener("click", () => addComment());
 
 //reset for input type function
 function resetInputType() {
-  if (typeUserName !== "" || typeUserComment !== "") {
-    (typeUserName.value = ""), (typeUserComment.value = "");
-  }
+  (typeUserName.value = ""),
+    (typeUserComment.value = ""),
+    (writeComment.disabled = true);
+}
+//
 
-  return;
+//comment date & time function
+function getCommentDate() {
+  const dateOptions = {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+
+  const commentTime = new Date()
+    .toLocaleDateString("ru-RU", dateOptions)
+    .split(",")
+    .join("");
+
+  return commentTime;
 }
 //
 
 //additional tasks!
+
 //task 1
 const activeOrInactiveBtn = () => {
   typeUserName.value.trim() && typeUserComment.value.trim()
     ? (writeComment.disabled = false)
     : (writeComment.disabled = true);
-
-  return;
 };
 
 typeUserName.addEventListener("input", () => activeOrInactiveBtn());
@@ -91,8 +89,6 @@ function addCommentByKey() {
       addComment();
     }
   });
-
-  return;
 }
 
 addCommentByKey();
@@ -105,8 +101,6 @@ function delLastComment() {
   deleteComment.addEventListener("click", () => {
     listComment.removeChild(listComment.lastElementChild);
   });
-
-  return;
 }
 
 delLastComment();
