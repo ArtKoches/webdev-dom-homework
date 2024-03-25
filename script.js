@@ -28,69 +28,19 @@ const users = [
 ];
 //
 
-//function add event listener for like/dislike buttons
-const initLikeBtn = () => {
-  const likeBtn = document.querySelectorAll(".like-button");
-
-  likeBtn.forEach((like) => {
-    like.addEventListener("click", () => {
-      const index = like.dataset.index;
-      users[index].isLiked = !users[index].isLiked;
-
-      if (users[index].isLiked) {
-        users[index].numberOfLikes++;
-      } else {
-        users[index].numberOfLikes--;
-      }
-
-      renderUsers();
-    });
-  });
-};
-//
-
-//function add event listener for redact comments buttons ???
-function initRedactBtn() {
-  const redactBtn = document.querySelectorAll(".redact-comment-btn");
-
-  redactBtn.forEach((button) => {
-    button.addEventListener("click", () => {
-      const index = button.dataset.index;
-      users[index].isRedact = !users[index].isRedact;
-
-      console.log(users[index].comment);
-
-      renderUsers();
-    });
-  });
-}
-
-// Что нужно сделать:
-// Пользователь должен иметь возможность отредактировать любой уже написанный комментарий.
-// Для этого под каждым комментарием должна появиться кнопка «Редактировать».
-// При клике на кнопку «Редактировать», текст комментария должен замениться полем ввода в формате textarea, а кнопка «Редактировать» должна быть заменена на кнопку «Сохранить».
-// В поле ввода должен быть автоматически подставлен текущий текст комментария для удобного редактирования.
-// Пользователь может внести изменения в текст комментария, используя поле ввода.
-// При клике на кнопку «Сохранить» введённые изменения должны быть сохранены в массив данных, а интерфейс должен вернуться в исходное состояние.
-
-// Подсказка
-// Для возможности переключения комментария в режим редактирования можно использовать новое поле
-// isEdit
-//  внутри объекта комментария. Значение этого поля будет определять, комментарий должен отображаться в виде текста комментария или в виде текстового поля (textarea).
-//
-
 //js to html render main function
 const renderUsers = () => {
   const usersHtml = users
     .map((user, index) => {
       const likeBtnClass = user.isLiked ? "-active-like" : "";
+
       return `<li class="comment">
     <div class="comment-header">
     <div>${user.name}</div>
     <div>${user.time}</div>
     </div>
     <div class="comment-body">
-    <div class="comment-text">
+    <div class="comment-text" data-index="${index}">
     ${user.comment}
     </div>
     </div>
@@ -107,10 +57,11 @@ const renderUsers = () => {
 
   listComment.innerHTML = usersHtml;
 
-  initRedactBtn();
+  replyComment();
   initLikeBtn();
   addCommentByKey();
   resetInputType();
+  initRedactBtn();
 };
 
 renderUsers();
@@ -124,9 +75,9 @@ function addComment() {
   }
 
   users.push({
-    name: typeUserName.value,
+    name: safeInput(typeUserName.value),
     time: getCommentDate(),
-    comment: typeUserComment.value,
+    comment: safeInput(typeUserComment.value),
     numberOfLikes: 0,
     isLiked: false,
     isRedact: false,
@@ -137,6 +88,52 @@ function addComment() {
 
 writeComment.addEventListener("click", () => addComment());
 //
+
+//function add event listener for like/dislike buttons
+function initLikeBtn() {
+  const likeBtn = document.querySelectorAll(".like-button");
+
+  likeBtn.forEach((like) => {
+    like.addEventListener("click", () => {
+      const index = like.dataset.index;
+      users[index].isLiked = !users[index].isLiked;
+
+      if (users[index].isLiked) {
+        users[index].numberOfLikes++;
+      } else {
+        users[index].numberOfLikes--;
+      }
+
+      renderUsers();
+    });
+  });
+}
+//
+
+//start homeWork 2.11
+//reply comment function
+function replyComment() {
+  const comment = document.querySelectorAll(".comment-text");
+
+  comment.forEach((el) => {
+    el.addEventListener("click", () => {
+      const index = el.dataset.index;
+      typeUserComment.value = `> ${users[index].comment} \n ${users[index].name},`;
+    });
+  });
+}
+//
+
+//safe input function
+function safeInput(str) {
+  return str
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+//
+//finish homeWork 2.11
 
 //reset for input type function
 function resetInputType() {
@@ -199,3 +196,36 @@ function delLastComment() {
 
 delLastComment();
 //
+
+//task 4
+//function add event listener for redact comments buttons
+function initRedactBtn() {
+  const redactBtn = document.querySelectorAll(".redact-comment-btn");
+
+  redactBtn.forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = button.dataset.index;
+      users[index].isRedact = !users[index].isRedact;
+
+      console.log(users[index].comment);
+
+      renderUsers();
+    });
+  });
+}
+
+// Что нужно сделать:
+// Пользователь должен иметь возможность отредактировать любой уже написанный комментарий.
+// Для этого под каждым комментарием должна появиться кнопка «Редактировать».
+// При клике на кнопку «Редактировать», текст комментария должен замениться полем ввода в формате textarea, а кнопка «Редактировать» должна быть заменена на кнопку «Сохранить».
+// В поле ввода должен быть автоматически подставлен текущий текст комментария для удобного редактирования.
+// Пользователь может внести изменения в текст комментария, используя поле ввода.
+// При клике на кнопку «Сохранить» введённые изменения должны быть сохранены в массив данных, а интерфейс должен вернуться в исходное состояние.
+
+// Подсказка
+// Для возможности переключения комментария в режим редактирования можно использовать новое поле
+// isEdit
+//  внутри объекта комментария. Значение этого поля будет определять, комментарий должен отображаться в виде текста комментария или в виде текстового поля (textarea).
+//
+
+console.log("It works!");
