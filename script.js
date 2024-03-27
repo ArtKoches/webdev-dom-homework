@@ -1,5 +1,6 @@
 "use strict";
 
+
 //homeWork 2.9
 //main variables
 const writeComment = document.getElementById("comment-btn");
