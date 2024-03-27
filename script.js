@@ -1,3 +1,5 @@
+"use strict";
+
 //homeWork 2.9
 //main variables
 const writeComment = document.getElementById("comment-btn");
@@ -15,7 +17,6 @@ const users = [
     comment: "Это будет первый комментарий на этой странице",
     numberOfLikes: 3,
     isLiked: false,
-    isRedact: false,
   },
   {
     name: "Варвара Н.",
@@ -23,7 +24,6 @@ const users = [
     comment: "Мне нравится как оформлена эта страница! ❤",
     numberOfLikes: 75,
     isLiked: true,
-    isRedact: false,
   },
 ];
 //
@@ -77,10 +77,11 @@ function addComment() {
   users.push({
     name: safeInput(typeUserName.value),
     time: getCommentDate(),
-    comment: safeInput(typeUserComment.value),
+    comment: safeInput(typeUserComment.value)
+      .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+      .replaceAll("QUOTE_END", "</div>"),
     numberOfLikes: 0,
     isLiked: false,
-    isRedact: false,
   });
 
   renderUsers();
@@ -118,7 +119,7 @@ function replyComment() {
   comment.forEach((el) => {
     el.addEventListener("click", () => {
       const index = el.dataset.index;
-      typeUserComment.value = `> ${users[index].comment} \n ${users[index].name},`;
+      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].comment} QUOTE_END`;
     });
   });
 }
@@ -205,27 +206,9 @@ function initRedactBtn() {
   redactBtn.forEach((button) => {
     button.addEventListener("click", () => {
       const index = button.dataset.index;
-      users[index].isRedact = !users[index].isRedact;
-
-      console.log(users[index].comment);
-
-      renderUsers();
+      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].comment} QUOTE_END`;
     });
   });
 }
-
-// Что нужно сделать:
-// Пользователь должен иметь возможность отредактировать любой уже написанный комментарий.
-// Для этого под каждым комментарием должна появиться кнопка «Редактировать».
-// При клике на кнопку «Редактировать», текст комментария должен замениться полем ввода в формате textarea, а кнопка «Редактировать» должна быть заменена на кнопку «Сохранить».
-// В поле ввода должен быть автоматически подставлен текущий текст комментария для удобного редактирования.
-// Пользователь может внести изменения в текст комментария, используя поле ввода.
-// При клике на кнопку «Сохранить» введённые изменения должны быть сохранены в массив данных, а интерфейс должен вернуться в исходное состояние.
-
-// Подсказка
-// Для возможности переключения комментария в режим редактирования можно использовать новое поле
-// isEdit
-//  внутри объекта комментария. Значение этого поля будет определять, комментарий должен отображаться в виде текста комментария или в виде текстового поля (textarea).
-//
 
 console.log("It works!");
