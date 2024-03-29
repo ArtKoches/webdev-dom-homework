@@ -107,16 +107,27 @@ function addComment() {
     return;
   }
 
-  users.push({
-    name: safeInput(typeUserName.value),
-    time: getCommentDate(),
-    comment: safeInput(typeUserComment.value)
-      .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-      .replaceAll("QUOTE_END", "</div>"),
-    numberOfLikes: 0,
-    isLiked: false,
-  });
+  function postUserComments() {
+    fetch("https://wedev-api.sky.pro/api/v1/:Artur-Kochesokov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: safeInput(typeUserComment.value)
+          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+          .replaceAll("QUOTE_END", "</div>"),
 
+        name: safeInput(typeUserName.value),
+      }),
+    }).then((resp) => {
+      resp.json().then((respData) => {
+        respData.comments;
+
+        getUserComments();
+        renderUsers();
+      });
+    });
+  }
+  
+  postUserComments();
   renderUsers();
 }
 
