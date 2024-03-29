@@ -1,5 +1,52 @@
 "use strict";
 
+//homeWork 2.12
+//API method "GET" function
+function getUserComments() {
+  const fetchPromise = fetch(
+    "https://wedev-api.sky.pro/api/v1/:Artur-Kochesokov/comments",
+    {
+      method: "GET",
+    }
+  );
+
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+
+    jsonPromise.then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        function getFormattedCommentDate() {
+          const dateFormat = new Date(comment.date)
+            .toLocaleDateString("ru-RU", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+            .split(",")
+            .join("");
+
+          return dateFormat;
+        }
+
+        return {
+          name: comment.author.name,
+          date: getFormattedCommentDate(),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        };
+      });
+
+      users = appComments;
+      renderUsers();
+    });
+  });
+}
+
+getUserComments();
+//
 
 //homeWork 2.9
 //main variables
@@ -11,22 +58,7 @@ const typeUserComment = document.getElementById("user-comment");
 
 //start homeWork 2.10
 //main users list in array
-const users = [
-  {
-    name: "Глеб Фокин",
-    time: "12.02.22 12:18",
-    comment: "Это будет первый комментарий на этой странице",
-    numberOfLikes: 3,
-    isLiked: false,
-  },
-  {
-    name: "Варвара Н.",
-    time: "13.02.22 19:22",
-    comment: "Мне нравится как оформлена эта страница! ❤",
-    numberOfLikes: 75,
-    isLiked: true,
-  },
-];
+let users = [];
 //
 
 //js to html render main function
@@ -38,17 +70,17 @@ const renderUsers = () => {
       return `<li class="comment">
     <div class="comment-header">
     <div>${user.name}</div>
-    <div>${user.time}</div>
+    <div>${user.date}</div>
     </div>
     <div class="comment-body">
     <div class="comment-text" data-index="${index}">
-    ${user.comment}
+    ${user.text}
     </div>
     </div>
     <div class="comment-footer">
     <button class="redact-comment-btn" data-index="${index}"></button>
     <div class="likes">
-    <span class="likes-counter">${user.numberOfLikes}</span>
+    <span class="likes-counter">${user.likes}</span>
     <button class="like-button ${likeBtnClass}" data-index="${index}"></button>
           </div>
           </div>
@@ -101,9 +133,9 @@ function initLikeBtn() {
       users[index].isLiked = !users[index].isLiked;
 
       if (users[index].isLiked) {
-        users[index].numberOfLikes++;
+        users[index].likes++;
       } else {
-        users[index].numberOfLikes--;
+        users[index].likes--;
       }
 
       renderUsers();
@@ -120,7 +152,7 @@ function replyComment() {
   comment.forEach((el) => {
     el.addEventListener("click", () => {
       const index = el.dataset.index;
-      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].comment} QUOTE_END`;
+      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END`;
     });
   });
 }
@@ -207,7 +239,7 @@ function initRedactBtn() {
   redactBtn.forEach((button) => {
     button.addEventListener("click", () => {
       const index = button.dataset.index;
-      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].comment} QUOTE_END`;
+      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END`;
     });
   });
 }
