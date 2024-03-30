@@ -93,7 +93,6 @@ const renderUsers = () => {
   replyComment();
   initLikeBtn();
   addCommentByKey();
-  resetInputType();
   initRedactBtn();
 };
 
@@ -122,13 +121,12 @@ function addComment() {
         respData.comments;
 
         getUserComments();
-        renderUsers();
       });
     });
   }
-  
+
   postUserComments();
-  renderUsers();
+  resetInputType();
 }
 
 writeComment.addEventListener("click", () => addComment());
