@@ -97,6 +97,9 @@ function addComment() {
     return;
   }
 
+  // const addPreloader = document.querySelector(".add-form");
+  // addPreloader.innerHTML = `<img src="preloader-img.gif" alt="loading" width="48px" height="48px">`;
+
   function postUserComments() {
     fetch("https://wedev-api.sky.pro/api/v1/:Artur-Kochesokov/comments", {
       method: "POST",
@@ -114,7 +117,35 @@ function addComment() {
         getUserComments();
       });
     });
+    // .finally(() => {
+    //   deletePreloader();
+    //   writeComment.addEventListener("click", () => addComment());
+    // });
   }
+
+  // function deletePreloader() {
+  //   addPreloader.innerHTML = `<input
+  //   id="user-name-new"
+  //   type="text"
+  //   class="add-form-name"
+  //   placeholder="Введите ваше имя"
+  //   />
+  //   <textarea
+  //   id="user-comment-new"
+  //   type="textarea"
+  //   class="add-form-text"
+  //   placeholder="Введите ваш коментарий"
+  //   rows="4"
+  //   ></textarea>
+  //   <div class="add-form-row">
+  //   <button id="comment-btn-new" class="add-form-button" disabled>
+  //   Написать
+  //   </button>
+  //   <button id="del-comment-btn" class="del-form-button">
+  //   Удалить последний комментарий
+  //   </button>
+  //   </div>`;
+  // }
 
   postUserComments();
   resetInputType();
