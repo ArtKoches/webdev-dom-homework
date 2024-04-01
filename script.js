@@ -1,10 +1,17 @@
 "use strict";
 
-//variables
+//main variables
 const writeComment = document.getElementById("comment-btn");
+
 const listComment = document.getElementById("comments-list");
+
 const typeUserName = document.getElementById("user-name");
+
 const typeUserComment = document.getElementById("user-comment");
+
+const addForm = document.querySelector(".add-form");
+
+const preLoader = document.querySelector(".preloader");
 
 let users = [];
 //
@@ -97,8 +104,10 @@ function addComment() {
     return;
   }
 
-  // const addPreloader = document.querySelector(".add-form");
-  // addPreloader.innerHTML = `<img src="preloader-img.gif" alt="loading" width="48px" height="48px">`;
+  function addPreLoader() {
+    addForm.style.display = "none";
+    preLoader.style.display = "block";
+  }
 
   function postUserComments() {
     fetch("https://wedev-api.sky.pro/api/v1/:Artur-Kochesokov/comments", {
@@ -110,43 +119,21 @@ function addComment() {
 
         name: safeInput(typeUserName.value),
       }),
-    }).then((resp) => {
-      resp.json().then((respData) => {
-        respData.comments;
+    })
+      .then((resp) => {
+        resp.json().then((respData) => {
+          respData.comments;
 
-        getUserComments();
+          getUserComments();
+        });
+      })
+      .finally(() => {
+        preLoader.style.display = "none";
+        addForm.style.display = "flex";
       });
-    });
-    // .finally(() => {
-    //   deletePreloader();
-    //   writeComment.addEventListener("click", () => addComment());
-    // });
   }
 
-  // function deletePreloader() {
-  //   addPreloader.innerHTML = `<input
-  //   id="user-name-new"
-  //   type="text"
-  //   class="add-form-name"
-  //   placeholder="Введите ваше имя"
-  //   />
-  //   <textarea
-  //   id="user-comment-new"
-  //   type="textarea"
-  //   class="add-form-text"
-  //   placeholder="Введите ваш коментарий"
-  //   rows="4"
-  //   ></textarea>
-  //   <div class="add-form-row">
-  //   <button id="comment-btn-new" class="add-form-button" disabled>
-  //   Написать
-  //   </button>
-  //   <button id="del-comment-btn" class="del-form-button">
-  //   Удалить последний комментарий
-  //   </button>
-  //   </div>`;
-  // }
-
+  addPreLoader();
   postUserComments();
   resetInputType();
 }
@@ -204,7 +191,7 @@ typeUserName.addEventListener("input", () => activeOrInactiveBtn());
 typeUserComment.addEventListener("input", () => activeOrInactiveBtn());
 //
 
-//add comment by 'Enter' key
+//add comment by 'Enter'
 function addCommentByKey() {
   document.addEventListener("keyup", (event) => {
     if (event.key === "Enter") {
@@ -233,7 +220,7 @@ function replyComment() {
   redactBtn.forEach((button) => {
     button.addEventListener("click", () => {
       const index = button.dataset.index;
-      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END`;
+      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END `;
     });
   });
 }

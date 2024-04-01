@@ -175,3 +175,13 @@ body {
   white-space: pre-line;
   word-wrap: break-word;
 }
+
+.preloader {
+  margin-top: 24px;
+  display: none;
+}
+
+.preloader__img {
+  width: 72px;
+  height: 72px;
+}
