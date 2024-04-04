@@ -13,6 +13,8 @@ const addForm = document.querySelector(".add-form");
 
 const preLoader = document.querySelector(".preloader");
 
+const baseUrl = "https://wedev-api.sky.pro/api/v1/:art-koches/comments";
+
 let users = [];
 //
 
@@ -55,10 +57,10 @@ renderUsers();
 //fetch with 'GET' method
 function getUserComments() {
   //add preloader
-  preLoader.setAttribute("style", "display: block");
+  preLoader.classList.add("-loading-preloader");
   //
 
-  fetch("https://wedev-api.sky.pro/api/v1/:art-koches/comments", {
+  fetch(baseUrl, {
     method: "GET",
   })
     .then((response) => {
@@ -97,7 +99,7 @@ function getUserComments() {
     })
     .finally(() => {
       //delete preloader
-      preLoader.removeAttribute("style", "display: block");
+      preLoader.classList.remove("-loading-preloader");
       //
     });
 }
@@ -111,13 +113,13 @@ function addComment() {
   }
 
   //add preloader
-  addForm.setAttribute("style", "display: none");
-  preLoader.setAttribute("style", "display: block");
+  addForm.classList.add("-inactive-add-form");
+  preLoader.classList.add("-loading-preloader");
   //
 
   //fetch with 'POST' method
   function postUserComments() {
-    fetch("https://wedev-api.sky.pro/api/v1/:art-koches/comments", {
+    fetch(baseUrl, {
       method: "POST",
       body: JSON.stringify({
         text: safeInput(authorsTextInput.value)
@@ -135,8 +137,8 @@ function addComment() {
       })
       .finally(() => {
         //delete preloader
-        addForm.removeAttribute("style", "display: none");
-        preLoader.removeAttribute("style", "display: block");
+        preLoader.classList.remove("-loading-preloader");
+        addForm.classList.remove("-inactive-add-form");
         //
       });
   }
