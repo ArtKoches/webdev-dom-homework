@@ -1,13 +1,13 @@
 "use strict";
 
 //main variables
-const writeComment = document.getElementById("comment-btn");
+const addCommentBtn = document.querySelector(".add-form-button");
 
-const listComment = document.getElementById("comments-list");
+const commentsList = document.querySelector(".comments");
 
-const typeUserName = document.getElementById("user-name");
+const authorsNameInput = document.querySelector(".add-form-name");
 
-const typeUserComment = document.getElementById("user-comment");
+const authorsTextInput = document.querySelector(".add-form-text");
 
 const addForm = document.querySelector(".add-form");
 
@@ -43,7 +43,7 @@ const renderUsers = () => {
     })
     .join("");
 
-  listComment.innerHTML = usersHtml;
+  commentsList.innerHTML = usersHtml;
 
   replyComment();
   initLikeBtn();
@@ -52,21 +52,22 @@ const renderUsers = () => {
 renderUsers();
 //
 
-//API 'GET' method function
+//fetch with 'GET' method
 function getUserComments() {
-  const fetchPromise = fetch(
-    "https://wedev-api.sky.pro/api/v1/:Artur-Kochesokov/comments",
-    {
-      method: "GET",
-    }
-  );
+  //add preloader
+  preLoader.setAttribute("style", "display: block");
+  //
 
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-
-    jsonPromise.then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        function getFormattedCommentDate() {
+  fetch("https://wedev-api.sky.pro/api/v1/:art-koches/comments", {
+    method: "GET",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((respData) => {
+      const appComments = respData.comments.map((comment) => {
+        //format comment date
+        function getFormatDate() {
           const dateFormat = new Date(comment.date)
             .toLocaleDateString("ru-RU", {
               day: "2-digit",
@@ -80,10 +81,11 @@ function getUserComments() {
 
           return dateFormat;
         }
+        //
 
         return {
           name: comment.author.name,
-          date: getFormattedCommentDate(),
+          date: getFormatDate(),
           text: comment.text,
           likes: comment.likes,
           isLiked: false,
@@ -92,15 +94,19 @@ function getUserComments() {
 
       users = appComments;
       renderUsers();
+    })
+    .finally(() => {
+      //delete preloader
+      preLoader.removeAttribute("style", "display: block");
+      //
     });
-  });
 }
 getUserComments();
 //
 
 //add comment
 function addComment() {
-  if (!typeUserName.value.trim() || !typeUserComment.value.trim()) {
+  if (!authorsNameInput.value.trim() || !authorsTextInput.value.trim()) {
     return;
   }
 
@@ -109,15 +115,16 @@ function addComment() {
   preLoader.setAttribute("style", "display: block");
   //
 
+  //fetch with 'POST' method
   function postUserComments() {
-    fetch("https://wedev-api.sky.pro/api/v1/:Artur-Kochesokov/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/:art-koches/comments", {
       method: "POST",
       body: JSON.stringify({
-        text: safeInput(typeUserComment.value)
+        text: safeInput(authorsTextInput.value)
           .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
           .replaceAll("QUOTE_END", "</div>"),
 
-        name: safeInput(typeUserName.value),
+        name: safeInput(authorsNameInput.value),
       }),
     })
       .then((response) => {
@@ -133,12 +140,13 @@ function addComment() {
         //
       });
   }
+  //
 
   postUserComments();
   resetInputType();
 }
 
-writeComment.addEventListener("click", () => addComment());
+addCommentBtn.addEventListener("click", () => addComment());
 //
 
 //init like/dislike button
@@ -174,21 +182,21 @@ function safeInput(str) {
 
 //reset for input type
 function resetInputType() {
-  (typeUserName.value = ""),
-    (typeUserComment.value = ""),
-    (writeComment.disabled = true);
+  (authorsNameInput.value = ""),
+    (authorsTextInput.value = ""),
+    (addCommentBtn.disabled = true);
 }
 //
 
 //extended input validate
 const activeOrInactiveBtn = () => {
-  typeUserName.value.trim() && typeUserComment.value.trim()
-    ? (writeComment.disabled = false)
-    : (writeComment.disabled = true);
+  authorsNameInput.value.trim() && authorsTextInput.value.trim()
+    ? (addCommentBtn.disabled = false)
+    : (addCommentBtn.disabled = true);
 };
 
-typeUserName.addEventListener("input", () => activeOrInactiveBtn());
-typeUserComment.addEventListener("input", () => activeOrInactiveBtn());
+authorsNameInput.addEventListener("input", () => activeOrInactiveBtn());
+authorsTextInput.addEventListener("input", () => activeOrInactiveBtn());
 //
 
 //add comment by 'Enter'
@@ -203,9 +211,9 @@ function addCommentByKey() {
 
 //delete last comment
 function delLastComment() {
-  const deleteComment = document.getElementById("del-comment-btn");
+  const deleteBtn = document.querySelector(".del-form-button");
 
-  deleteComment.addEventListener("click", () => {
+  deleteBtn.addEventListener("click", () => {
     users.splice(-1);
     renderUsers();
   });
@@ -215,12 +223,12 @@ delLastComment();
 
 //reply comment
 function replyComment() {
-  const redactBtn = document.querySelectorAll(".redact-comment-btn");
+  const quoteBtn = document.querySelectorAll(".redact-comment-btn");
 
-  redactBtn.forEach((button) => {
+  quoteBtn.forEach((button) => {
     button.addEventListener("click", () => {
       const index = button.dataset.index;
-      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END `;
+      authorsTextInput.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END `;
     });
   });
 }
