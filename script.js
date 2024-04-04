@@ -104,10 +104,10 @@ function addComment() {
     return;
   }
 
-  function addPreLoader() {
-    addForm.style.display = "none";
-    preLoader.style.display = "block";
-  }
+  //add preloader
+  addForm.setAttribute("style", "display: none");
+  preLoader.setAttribute("style", "display: block");
+  //
 
   function postUserComments() {
     fetch("https://wedev-api.sky.pro/api/v1/:Artur-Kochesokov/comments", {
@@ -120,20 +120,20 @@ function addComment() {
         name: safeInput(typeUserName.value),
       }),
     })
-      .then((resp) => {
-        resp.json().then((respData) => {
-          respData.comments;
-
-          getUserComments();
-        });
+      .then((response) => {
+        return response.json();
+      })
+      .then(() => {
+        getUserComments();
       })
       .finally(() => {
-        preLoader.style.display = "none";
-        addForm.style.display = "flex";
+        //delete preloader
+        addForm.removeAttribute("style", "display: none");
+        preLoader.removeAttribute("style", "display: block");
+        //
       });
   }
 
-  addPreLoader();
   postUserComments();
   resetInputType();
 }
