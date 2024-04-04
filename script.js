@@ -155,16 +155,19 @@ function initLikeBtn() {
 
   likeBtn.forEach((like) => {
     like.addEventListener("click", () => {
-      const index = like.dataset.index;
-      users[index].isLiked = !users[index].isLiked;
+      //add animation for like button on click
+      like.classList.add("-loading-like");
 
-      if (users[index].isLiked) {
-        users[index].likes++;
-      } else {
-        users[index].likes--;
-      }
+      delay(2000).then(() => {
+        const index = like.dataset.index;
 
-      renderUsers();
+        users[index].isLiked = !users[index].isLiked;
+
+        users[index].isLiked ? users[index].likes++ : users[index].likes--;
+
+        renderUsers();
+      });
+      //
     });
   });
 }
@@ -230,6 +233,16 @@ function replyComment() {
       const index = button.dataset.index;
       authorsTextInput.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END `;
     });
+  });
+}
+//
+
+//delay for like button
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
   });
 }
 //
