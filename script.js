@@ -33,7 +33,7 @@ const renderUsers = () => {
     </div>
     </div>
     <div class="comment-footer">
-    <button class="redact-comment-btn" data-index="${index}"></button>
+    <button class="quote-comment-btn" data-index="${index}"></button>
     <div class="likes">
     <span class="likes-counter">${user.likes}</span>
     <button class="like-button ${likeBtnClass}" data-index="${index}"></button>
@@ -223,7 +223,7 @@ delLastComment();
 
 //reply comment
 function replyComment() {
-  const quoteBtn = document.querySelectorAll(".redact-comment-btn");
+  const quoteBtn = document.querySelectorAll(".quote-comment-btn");
 
   quoteBtn.forEach((button) => {
     button.addEventListener("click", () => {

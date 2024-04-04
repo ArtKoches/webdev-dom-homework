@@ -65,13 +65,13 @@ body {
   word-wrap: break-word;
 }
 
-.redact-comment-btn {
+.quote-comment-btn {
   all: unset;
   cursor: pointer;
 }
 
-.redact-comment-btn {
-  background-image: url("redact-icon-btn.svg");
+.quote-comment-btn {
+  background-image: url("quote-icon-btn.svg");
   background-size: contain;
   width: 36px;
   height: 36px;
