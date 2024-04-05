@@ -13,7 +13,7 @@ const addForm = document.querySelector(".add-form");
 
 const preLoader = document.querySelector(".preloader");
 
-const baseUrl = "https://wedev-api.sky.pro/api/v1/:art-koches/comments";
+const baseUrl = "https://wedev-api.sky.pro/api/v1/:artur-kochesokov/comments";
 
 let users = [];
 //
@@ -68,26 +68,9 @@ function getUserComments() {
     })
     .then((respData) => {
       const appComments = respData.comments.map((comment) => {
-        //format comment date
-        function getFormatDate() {
-          const dateFormat = new Date(comment.date)
-            .toLocaleDateString("ru-RU", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-            .split(",")
-            .join("");
-
-          return dateFormat;
-        }
-        //
-
         return {
           name: comment.author.name,
-          date: getFormatDate(),
+          date: getFormatDate(comment.date),
           text: comment.text,
           likes: comment.likes,
           isLiked: false,
@@ -127,13 +110,18 @@ function addComment() {
           .replaceAll("QUOTE_END", "</div>"),
 
         name: safeInput(authorsNameInput.value),
+        forceError: true,
       }),
     })
       .then((response) => {
-        return response.json();
+        initErrorLog(response);
       })
       .then(() => {
         getUserComments();
+      })
+      .catch(() => {
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+        addCommentBtn.disabled = true;
       })
       .finally(() => {
         //delete preloader
@@ -145,7 +133,6 @@ function addComment() {
   //
 
   postUserComments();
-  resetInputType();
 }
 
 addCommentBtn.addEventListener("click", () => addComment());
@@ -155,13 +142,13 @@ addCommentBtn.addEventListener("click", () => addComment());
 function initLikeBtn() {
   const likeBtn = document.querySelectorAll(".like-button");
 
-  likeBtn.forEach((like) => {
-    like.addEventListener("click", () => {
+  likeBtn.forEach((button) => {
+    button.addEventListener("click", () => {
       //add animation for like button on click
-      like.classList.add("-loading-like");
+      button.classList.add("-loading-like");
 
       delay(2000).then(() => {
-        const index = like.dataset.index;
+        const index = button.dataset.index;
 
         users[index].isLiked = !users[index].isLiked;
 
@@ -246,6 +233,36 @@ function delay(interval = 300) {
       resolve();
     }, interval);
   });
+}
+//
+
+//format comment date
+function getFormatDate(date) {
+  date = new Date(date)
+    .toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    .split(",")
+    .join("");
+
+  return date;
+}
+//
+
+//errors log in response
+function initErrorLog(resp) {
+  if (resp.status === 500) {
+    alert("Сервер сломался, попробуй позже");
+  } else if (resp.status === 400) {
+    alert("Имя и комментарий должны быть не короче 3 символов");
+  } else {
+    resetInputType();
+    return resp.json();
+  }
 }
 //
 
