@@ -62,9 +62,15 @@ function getUserComments() {
 
   fetch(baseUrl, {
     method: "GET",
+    forceError: true,
   })
     .then((response) => {
-      return response.json();
+      if (response.status === 500) {
+        alert("Сервер сломался, попробуй позже");
+        throw new Error("Ошибка сервера");
+      } else {
+        return response.json();
+      }
     })
     .then((respData) => {
       const appComments = respData.comments.map((comment) => {
@@ -79,6 +85,9 @@ function getUserComments() {
 
       users = appComments;
       renderUsers();
+    })
+    .catch((error) => {
+      errorHandler(error);
     })
     .finally(() => {
       //delete preloader
@@ -105,10 +114,7 @@ function addComment() {
     fetch(baseUrl, {
       method: "POST",
       body: JSON.stringify({
-        text: safeInput(authorsTextInput.value)
-          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-          .replaceAll("QUOTE_END", "</div>"),
-
+        text: safeInput(authorsTextInput.value),
         name: safeInput(authorsNameInput.value),
         forceError: true,
       }),
@@ -119,9 +125,8 @@ function addComment() {
       .then(() => {
         getUserComments();
       })
-      .catch(() => {
-        alert("Кажется, у вас сломался интернет, попробуйте позже");
-        addCommentBtn.disabled = true;
+      .catch((error) => {
+        errorHandler(error);
       })
       .finally(() => {
         //delete preloader
@@ -168,7 +173,9 @@ function safeInput(str) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+    .replaceAll('"', "&quot;")
+    .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+    .replaceAll("QUOTE_END", "</div>");
 }
 //
 
@@ -257,11 +264,25 @@ function getFormatDate(date) {
 function initErrorLog(resp) {
   if (resp.status === 500) {
     alert("Сервер сломался, попробуй позже");
+    throw new Error("Ошибка сервера");
   } else if (resp.status === 400) {
     alert("Имя и комментарий должны быть не короче 3 символов");
+    throw new Error("Плохой запрос");
   } else {
     resetInputType();
     return resp.json();
+  }
+}
+//
+
+//error handler in catch call
+function errorHandler(err) {
+  console.error(err);
+
+  if (err.message === "Failed to fetch") {
+    alert("Кажется, у вас сломался интернет, попробуйте позже");
+    addCommentBtn.disabled = true;
+    throw new Error("Интернет отключен");
   }
 }
 //
