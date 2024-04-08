@@ -98,6 +98,34 @@ function getUserComments() {
 getUserComments();
 //
 
+//fetch with 'POST' method
+function postUserComments() {
+  fetch(baseUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      text: safeInput(authorsTextInput.value),
+      name: safeInput(authorsNameInput.value),
+      forceError: true,
+    }),
+  })
+    .then((response) => {
+      initErrorLog(response);
+    })
+    .then(() => {
+      getUserComments();
+    })
+    .catch((error) => {
+      errorHandler(error);
+    })
+    .finally(() => {
+      //delete preloader
+      preLoader.classList.remove("-loading-preloader");
+      addForm.classList.remove("-inactive-add-form");
+      //
+    });
+}
+//
+
 //add comment
 function addComment() {
   if (!authorsNameInput.value.trim() || !authorsTextInput.value.trim()) {
@@ -107,34 +135,6 @@ function addComment() {
   //add preloader
   addForm.classList.add("-inactive-add-form");
   preLoader.classList.add("-loading-preloader");
-  //
-
-  //fetch with 'POST' method
-  function postUserComments() {
-    fetch(baseUrl, {
-      method: "POST",
-      body: JSON.stringify({
-        text: safeInput(authorsTextInput.value),
-        name: safeInput(authorsNameInput.value),
-        forceError: true,
-      }),
-    })
-      .then((response) => {
-        initErrorLog(response);
-      })
-      .then(() => {
-        getUserComments();
-      })
-      .catch((error) => {
-        errorHandler(error);
-      })
-      .finally(() => {
-        //delete preloader
-        preLoader.classList.remove("-loading-preloader");
-        addForm.classList.remove("-inactive-add-form");
-        //
-      });
-  }
   //
 
   postUserComments();
@@ -264,6 +264,7 @@ function getFormatDate(date) {
 function initErrorLog(resp) {
   if (resp.status === 500) {
     alert("Сервер сломался, попробуй позже");
+    postUserComments();
     throw new Error("Ошибка сервера");
   } else if (resp.status === 400) {
     alert("Имя и комментарий должны быть не короче 3 символов");
