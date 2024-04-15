@@ -99,7 +99,7 @@ getUserComments();
 //
 
 //fetch with 'POST' method
-function postUserComments() {
+function postUserComments(postTries = 2) {
   fetch(baseUrl, {
     method: "POST",
     body: JSON.stringify({
@@ -109,7 +109,7 @@ function postUserComments() {
     }),
   })
     .then((response) => {
-      initErrorLog(response);
+      initErrorLog(response, postTries);
     })
     .then(() => {
       getUserComments();
@@ -261,11 +261,16 @@ function getFormatDate(date) {
 //
 
 //errors log in response
-function initErrorLog(resp) {
+function initErrorLog(resp, postTries) {
   if (resp.status === 500) {
-    alert("Сервер сломался, попробуй позже");
-    postUserComments();
-    throw new Error("Ошибка сервера");
+    if (postTries > 0) {
+      postUserComments(--postTries);
+    } else {
+      alert(
+        "Сервер сломался, не удалось отправить сообщение за 2 попытки, попробуй позже"
+      );
+      throw new Error("Ошибка сервера");
+    }
   } else if (resp.status === 400) {
     alert("Имя и комментарий должны быть не короче 3 символов");
     throw new Error("Плохой запрос");
