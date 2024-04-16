@@ -56,9 +56,7 @@ renderUsers();
 
 //fetch with 'GET' method
 function getUserComments() {
-  //add preloader
   preLoader.classList.add("-loading-preloader");
-  //
 
   fetch(baseUrl, {
     method: "GET",
@@ -86,14 +84,8 @@ function getUserComments() {
       users = appComments;
       renderUsers();
     })
-    .catch((error) => {
-      errorHandler(error);
-    })
-    .finally(() => {
-      //delete preloader
-      preLoader.classList.remove("-loading-preloader");
-      //
-    });
+    .catch(errorHandler)
+    .finally(() => preLoader.classList.remove("-loading-preloader"));
 }
 getUserComments();
 //
@@ -108,20 +100,12 @@ function postUserComments(postTries = 2) {
       forceError: true,
     }),
   })
-    .then((response) => {
-      initErrorLog(response, postTries);
-    })
-    .then(() => {
-      getUserComments();
-    })
-    .catch((error) => {
-      errorHandler(error);
-    })
+    .then((response) => initErrorLog(response, postTries))
+    .then(getUserComments)
+    .catch(errorHandler)
     .finally(() => {
-      //delete preloader
       preLoader.classList.remove("-loading-preloader");
       addForm.classList.remove("-inactive-add-form");
-      //
     });
 }
 //
@@ -132,10 +116,8 @@ function addComment() {
     return;
   }
 
-  //add preloader
   addForm.classList.add("-inactive-add-form");
   preLoader.classList.add("-loading-preloader");
-  //
 
   postUserComments();
 }
