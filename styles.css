@@ -65,13 +65,13 @@ body {
   word-wrap: break-word;
 }
 
-.redact-comment-btn {
+.quote-comment-btn {
   all: unset;
   cursor: pointer;
 }
 
-.redact-comment-btn {
-  background-image: url("redact-icon-btn.svg");
+.quote-comment-btn {
+  background-image: url("quote-icon-btn.svg");
   background-size: contain;
   width: 36px;
   height: 36px;
@@ -109,6 +109,10 @@ body {
   margin-top: 48px;
   display: flex;
   flex-direction: column;
+}
+
+.-inactive-add-form {
+  display: none;
 }
 
 .add-form-name,
@@ -174,4 +178,37 @@ body {
   margin-bottom: 32px;
   white-space: pre-line;
   word-wrap: break-word;
+}
+
+.preloader {
+  margin-top: 24px;
+  display: none;
+}
+
+.-loading-preloader {
+  display: block;
+}
+
+.preloader__img {
+  width: 72px;
+  height: 72px;
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(30deg);
+  }
+  75% {
+    transform: rotate(-30deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.-loading-like {
+  animation: rotating 2s linear infinite;
 }

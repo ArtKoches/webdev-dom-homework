@@ -1,34 +1,24 @@
 "use strict";
 
-//homeWork 2.9
 //main variables
-const writeComment = document.getElementById("comment-btn");
-const listComment = document.getElementById("comments-list");
-const typeUserName = document.getElementById("user-name");
-const typeUserComment = document.getElementById("user-comment");
+const addCommentBtn = document.querySelector(".add-form-button");
+
+const commentsList = document.querySelector(".comments");
+
+const authorsNameInput = document.querySelector(".add-form-name");
+
+const authorsTextInput = document.querySelector(".add-form-text");
+
+const addForm = document.querySelector(".add-form");
+
+const preLoader = document.querySelector(".preloader");
+
+const baseUrl = "https://wedev-api.sky.pro/api/v1/:artur-kochesokov/comments";
+
+let users = [];
 //
 
-//start homeWork 2.10
-//main users list in array
-const users = [
-  {
-    name: "Глеб Фокин",
-    time: "12.02.22 12:18",
-    comment: "Это будет первый комментарий на этой странице",
-    numberOfLikes: 3,
-    isLiked: false,
-  },
-  {
-    name: "Варвара Н.",
-    time: "13.02.22 19:22",
-    comment: "Мне нравится как оформлена эта страница! ❤",
-    numberOfLikes: 75,
-    isLiked: true,
-  },
-];
-//
-
-//js to html render main function
+//render function
 const renderUsers = () => {
   const usersHtml = users
     .map((user, index) => {
@@ -37,17 +27,17 @@ const renderUsers = () => {
       return `<li class="comment">
     <div class="comment-header">
     <div>${user.name}</div>
-    <div>${user.time}</div>
+    <div>${user.date}</div>
     </div>
     <div class="comment-body">
     <div class="comment-text" data-index="${index}">
-    ${user.comment}
+    ${user.text}
     </div>
     </div>
     <div class="comment-footer">
-    <button class="redact-comment-btn" data-index="${index}"></button>
+    <button class="quote-comment-btn" data-index="${index}"></button>
     <div class="likes">
-    <span class="likes-counter">${user.numberOfLikes}</span>
+    <span class="likes-counter">${user.likes}</span>
     <button class="like-button ${likeBtnClass}" data-index="${index}"></button>
           </div>
           </div>
@@ -55,127 +45,142 @@ const renderUsers = () => {
     })
     .join("");
 
-  listComment.innerHTML = usersHtml;
+  commentsList.innerHTML = usersHtml;
 
   replyComment();
   initLikeBtn();
   addCommentByKey();
-  resetInputType();
-  initRedactBtn();
 };
-
 renderUsers();
 //
-//finish homeWork 2.10
 
-//main comment add function
+//fetch with 'GET' method
+function getUserComments() {
+  preLoader.classList.add("-loading-preloader");
+
+  fetch(baseUrl, {
+    method: "GET",
+    forceError: true,
+  })
+    .then((response) => {
+      if (response.status === 500) {
+        alert("Сервер сломался, попробуй позже");
+        throw new Error("Ошибка сервера");
+      } else {
+        return response.json();
+      }
+    })
+    .then((respData) => {
+      const appComments = respData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: getFormatDate(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        };
+      });
+
+      users = appComments;
+      renderUsers();
+    })
+    .catch(errorHandler)
+    .finally(() => preLoader.classList.remove("-loading-preloader"));
+}
+getUserComments();
+//
+
+//fetch with 'POST' method
+function postUserComments(postTries = 2) {
+  fetch(baseUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      text: safeInput(authorsTextInput.value),
+      name: safeInput(authorsNameInput.value),
+      forceError: true,
+    }),
+  })
+    .then((response) => initErrorLog(response, postTries))
+    .then(getUserComments)
+    .catch(errorHandler)
+    .finally(() => {
+      preLoader.classList.remove("-loading-preloader");
+      addForm.classList.remove("-inactive-add-form");
+    });
+}
+//
+
+//add comment
 function addComment() {
-  if (!typeUserName.value.trim() || !typeUserComment.value.trim()) {
+  if (!authorsNameInput.value.trim() || !authorsTextInput.value.trim()) {
     return;
   }
 
-  users.push({
-    name: safeInput(typeUserName.value),
-    time: getCommentDate(),
-    comment: safeInput(typeUserComment.value)
-      .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-      .replaceAll("QUOTE_END", "</div>"),
-    numberOfLikes: 0,
-    isLiked: false,
-  });
+  addForm.classList.add("-inactive-add-form");
+  preLoader.classList.add("-loading-preloader");
 
-  renderUsers();
+  postUserComments();
 }
 
-writeComment.addEventListener("click", () => addComment());
+addCommentBtn.addEventListener("click", () => addComment());
 //
 
-//function add event listener for like/dislike buttons
+//init like/dislike button
 function initLikeBtn() {
   const likeBtn = document.querySelectorAll(".like-button");
 
-  likeBtn.forEach((like) => {
-    like.addEventListener("click", () => {
-      const index = like.dataset.index;
-      users[index].isLiked = !users[index].isLiked;
+  likeBtn.forEach((button) => {
+    button.addEventListener("click", () => {
+      //add animation for like button on click
+      button.classList.add("-loading-like");
 
-      if (users[index].isLiked) {
-        users[index].numberOfLikes++;
-      } else {
-        users[index].numberOfLikes--;
-      }
+      delay(2000).then(() => {
+        const index = button.dataset.index;
 
-      renderUsers();
+        users[index].isLiked = !users[index].isLiked;
+
+        users[index].isLiked ? users[index].likes++ : users[index].likes--;
+
+        renderUsers();
+      });
+      //
     });
   });
 }
 //
 
-//start homeWork 2.11
-//reply comment function
-function replyComment() {
-  const comment = document.querySelectorAll(".comment-text");
-
-  comment.forEach((el) => {
-    el.addEventListener("click", () => {
-      const index = el.dataset.index;
-      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].comment} QUOTE_END`;
-    });
-  });
-}
-//
-
-//safe input function
+//safe input
 function safeInput(str) {
   return str
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+    .replaceAll('"', "&quot;")
+    .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+    .replaceAll("QUOTE_END", "</div>");
 }
 //
-//finish homeWork 2.11
 
-//reset for input type function
+//reset for input type
 function resetInputType() {
-  (typeUserName.value = ""),
-    (typeUserComment.value = ""),
-    (writeComment.disabled = true);
+  (authorsNameInput.value = ""),
+    (authorsTextInput.value = ""),
+    (addCommentBtn.disabled = true);
 }
 //
 
-//comment date & time function
-function getCommentDate() {
-  const dateOptions = {
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-
-  const commentTime = new Date()
-    .toLocaleDateString("ru-RU", dateOptions)
-    .split(",")
-    .join("");
-
-  return commentTime;
-}
-//
-
-//additional tasks!
-//task 1
+//extended input validate
 const activeOrInactiveBtn = () => {
-  typeUserName.value.trim() && typeUserComment.value.trim()
-    ? (writeComment.disabled = false)
-    : (writeComment.disabled = true);
+  authorsNameInput.value.trim() && authorsTextInput.value.trim()
+    ? (addCommentBtn.disabled = false)
+    : (addCommentBtn.disabled = true);
 };
 
-typeUserName.addEventListener("input", () => activeOrInactiveBtn());
-typeUserComment.addEventListener("input", () => activeOrInactiveBtn());
+authorsNameInput.addEventListener("input", () => activeOrInactiveBtn());
+authorsTextInput.addEventListener("input", () => activeOrInactiveBtn());
 //
 
-//task 2
+//add comment by 'Enter'
 function addCommentByKey() {
   document.addEventListener("keyup", (event) => {
     if (event.key === "Enter") {
@@ -185,30 +190,89 @@ function addCommentByKey() {
 }
 //
 
-//task 3 (fixed after add js to html render function)
+//delete last comment
 function delLastComment() {
-  const deleteComment = document.getElementById("del-comment-btn");
+  const deleteBtn = document.querySelector(".del-form-button");
 
-  deleteComment.addEventListener("click", () => {
+  deleteBtn.addEventListener("click", () => {
     users.splice(-1);
     renderUsers();
   });
 }
-
 delLastComment();
 //
 
-//task 4
-//function add event listener for redact comments buttons
-function initRedactBtn() {
-  const redactBtn = document.querySelectorAll(".redact-comment-btn");
+//reply comment
+function replyComment() {
+  const quoteBtn = document.querySelectorAll(".quote-comment-btn");
 
-  redactBtn.forEach((button) => {
+  quoteBtn.forEach((button) => {
     button.addEventListener("click", () => {
       const index = button.dataset.index;
-      typeUserComment.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].comment} QUOTE_END`;
+      authorsTextInput.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END `;
     });
   });
 }
+//
+
+//delay for like button
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
+//
+
+//format comment date
+function getFormatDate(date) {
+  date = new Date(date)
+    .toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    .split(",")
+    .join("");
+
+  return date;
+}
+//
+
+//errors log in response
+function initErrorLog(resp, postTries) {
+  if (resp.status === 500) {
+    if (postTries > 0) {
+      postUserComments(--postTries);
+    } else {
+      alert(
+        "Сервер сломался, не удалось отправить сообщение за 2 попытки, попробуй позже"
+      );
+      throw new Error("Ошибка сервера");
+    }
+  } else if (resp.status === 400) {
+    alert("Имя и комментарий должны быть не короче 3 символов");
+    throw new Error("Плохой запрос");
+  } else {
+    resetInputType();
+    return resp.json();
+  }
+}
+//
+
+//error handler in catch call
+function errorHandler(err) {
+  console.error(err);
+
+  if (err.message === "Failed to fetch") {
+    alert("Кажется, у вас сломался интернет, попробуйте позже");
+    addCommentBtn.disabled = true;
+    throw new Error("Интернет отключен");
+  }
+}
+//
 
 console.log("It works!");
