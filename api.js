@@ -1,6 +1,6 @@
 import { renderUsers } from "./render.js";
-import { safeInput, resetInputType } from "./input.js";
-import { getFormatDate } from "./add.js";
+import { safeInput, resetInputType } from "./helpers.js";
+import { getFormatDate } from "./helpers.js";
 import {
   preLoader,
   addForm,
@@ -10,6 +10,7 @@ import {
 } from "./main.js";
 
 export let users = [];
+
 export function getUserComments() {
   preLoader.classList.add("-loading-preloader");
 
