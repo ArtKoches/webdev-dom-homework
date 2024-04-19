@@ -1,5 +1,4 @@
 import { getUserComments } from "./api.js";
-import { renderUsers } from "./render.js";
 import { addBtnValidate } from "./helpers.js";
 import { addComment, commentAddByKey, delLastComment } from "./comment-add.js";
 
@@ -12,7 +11,6 @@ export const addForm = document.querySelector(".add-form");
 export const baseUrl =
   "https://wedev-api.sky.pro/api/v1/:artur-kochesokov/comments";
 
-renderUsers();
 getUserComments();
 addComment();
 commentAddByKey();

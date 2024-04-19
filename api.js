@@ -1,10 +1,9 @@
 import { renderUsers } from "./render.js";
-import { safeInput, resetInputType } from "./helpers.js";
-import { getFormatDate } from "./helpers.js";
+import { getFormatDate, safeInput, resetInputType } from "./helpers.js";
 import {
+  baseUrl,
   preLoader,
   addForm,
-  baseUrl,
   authorsTextInput,
   authorsNameInput,
 } from "./main.js";
@@ -38,6 +37,7 @@ export function getUserComments() {
       });
 
       users = appComments;
+      
       renderUsers();
     })
     .catch(errorHandler)

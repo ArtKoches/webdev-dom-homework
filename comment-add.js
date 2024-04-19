@@ -1,9 +1,9 @@
 import { users, postUserComments } from "./api.js";
 import { renderUsers } from "./render.js";
 import {
-  addCommentBtn,
   preLoader,
   addForm,
+  addCommentBtn,
   authorsNameInput,
   authorsTextInput,
 } from "./main.js";
