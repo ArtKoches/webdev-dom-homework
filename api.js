@@ -1,12 +1,14 @@
+import { setToken } from "./authtorization.js";
 import { renderUsers } from "./render.js";
 import { getFormatDate, safeInput, resetInputType } from "./helpers.js";
 import {
-  baseUrl,
   preLoader,
   addForm,
   authorsTextInput,
   authorsNameInput,
 } from "./main.js";
+
+const baseUrl = "https://wedev-api.sky.pro/api/v2/artur-kochesokov/comments";
 
 export let users = [];
 
@@ -15,6 +17,9 @@ export function getUserComments() {
 
   fetch(baseUrl, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${setToken}`,
+    },
     forceError: true,
   })
     .then((response) => {
@@ -37,7 +42,7 @@ export function getUserComments() {
       });
 
       users = appComments;
-      
+
       renderUsers();
     })
     .catch(errorHandler)
@@ -47,6 +52,9 @@ export function getUserComments() {
 export function postUserComments(postTries = 2) {
   fetch(baseUrl, {
     method: "POST",
+    headers: {
+      Authorization: `Bearer ${setToken}`,
+    },
     body: JSON.stringify({
       text: safeInput(authorsTextInput.value),
       name: safeInput(authorsNameInput.value),

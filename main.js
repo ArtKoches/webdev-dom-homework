@@ -8,8 +8,6 @@ export const authorsTextInput = document.querySelector(".add-form-text");
 export const authorsNameInput = document.querySelector(".add-form-name");
 export const addCommentBtn = document.querySelector(".add-form-button");
 export const addForm = document.querySelector(".add-form");
-export const baseUrl =
-  "https://wedev-api.sky.pro/api/v1/:artur-kochesokov/comments";
 
 getUserComments();
 addComment();
