@@ -1,5 +1,6 @@
 import { getUserComments } from "./api.js";
 import { addBtnValidate } from "./helpers.js";
+import { renderAuthForm, renderRegForm } from "./render-login.js";
 import { addComment, commentAddByKey, delLastComment } from "./comment-add.js";
 
 export const preLoader = document.querySelector(".preloader");
@@ -14,5 +15,7 @@ addComment();
 commentAddByKey();
 addBtnValidate();
 delLastComment();
+renderAuthForm();
+renderRegForm();
 
 console.log("It works!");

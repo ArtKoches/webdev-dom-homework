@@ -1,4 +1,4 @@
-import { setToken } from "./authtorization.js";
+import { setToken } from "./render-login.js";
 import { renderUsers } from "./render.js";
 import { getFormatDate, safeInput, resetInputType } from "./helpers.js";
 import {
@@ -8,27 +8,16 @@ import {
   authorsNameInput,
 } from "./main.js";
 
-const baseUrl = "https://wedev-api.sky.pro/api/v2/artur-kochesokov/comments";
+const baseUrl = "https://wedev-api.sky.pro/api/v2/artur-kochesoko/comments";
 
 export let users = [];
 
 export function getUserComments() {
   preLoader.classList.add("-loading-preloader");
 
-  fetch(baseUrl, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${setToken}`,
-    },
-    forceError: true,
-  })
+  fetch(baseUrl)
     .then((response) => {
-      if (response.status === 500) {
-        alert("Сервер сломался, попробуй позже");
-        throw new Error("Ошибка сервера");
-      } else {
-        return response.json();
-      }
+      return response.json();
     })
     .then((respData) => {
       const appComments = respData.comments.map((comment) => {
@@ -58,7 +47,6 @@ export function postUserComments(postTries = 2) {
     body: JSON.stringify({
       text: safeInput(authorsTextInput.value),
       name: safeInput(authorsNameInput.value),
-      forceError: true,
     }),
   })
     .then((response) => initErrorLog(response, postTries))
