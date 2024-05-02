@@ -1,17 +1,15 @@
-import { users, postUserComments } from "./api.js";
-import { renderUsers } from "./render.js";
+import { postUserComments } from "./api.js";
 import {
   preLoader,
   addForm,
   addCommentBtn,
-  authorsNameInput,
   authorsTextInput,
 } from "./main.js";
 
 export function addComment() {
   addCommentBtn.addEventListener("click", addComment);
 
-  if (!authorsNameInput.value.trim() || !authorsTextInput.value.trim()) {
+  if (!authorsTextInput.value.trim()) {
     return;
   }
 
@@ -25,13 +23,4 @@ export function commentAddByKey() {
   document.addEventListener("keyup", (event) =>
     event.key === "Enter" ? addComment() : ""
   );
-}
-
-export function delLastComment() {
-  const deleteBtn = document.querySelector(".del-form-button");
-
-  deleteBtn.addEventListener("click", () => {
-    users.splice(-1);
-    renderUsers();
-  });
 }

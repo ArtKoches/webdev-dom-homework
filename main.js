@@ -1,7 +1,7 @@
 import { getUserComments } from "./api.js";
 import { addBtnValidate } from "./helpers.js";
 import { renderAuthForm, renderRegForm } from "./render-login.js";
-import { addComment, commentAddByKey, delLastComment } from "./comment-add.js";
+import { addComment, commentAddByKey } from "./comment-add.js";
 
 export const preLoader = document.querySelector(".preloader");
 export const commentsList = document.querySelector(".comments");
@@ -14,7 +14,6 @@ getUserComments();
 addComment();
 commentAddByKey();
 addBtnValidate();
-delLastComment();
 renderAuthForm();
 renderRegForm();
 

@@ -1,4 +1,4 @@
-import { users } from "./api.js";
+import { users, deleteUserComments } from "./api.js";
 import { commentsList, authorsTextInput } from "./main.js";
 
 export const renderUsers = () => {
@@ -12,18 +12,20 @@ export const renderUsers = () => {
       <div>${user.date}</div>
       </div>
       <div class="comment-body">
-      <div class="comment-text" data-index="${index}">
-      ${user.text}
-      </div>
+      <div class="comment-text" data-index="${index}">${user.text}</div>
       </div>
       <div class="comment-footer">
-      <button class="quote-comment-btn" data-index="${index}"></button>
       <div class="likes">
-      <span class="likes-counter">${user.likes}</span>
-      <button class="like-button ${likeBtnClass}" data-index="${index}"></button>
-            </div>
-            </div>
-            </li>`;
+          <span class="likes-counter">${user.likes}</span>
+          <button
+          class="like-button ${likeBtnClass}"
+          data-index="${index}"
+          ></button>
+          <button class="quote-comment-btn" data-index="${index}"></button>
+          <button class="delete-comment-btn" data-id="${user.id}"></button>
+          </div>
+          </div>
+    </li>`;
     })
     .join("");
 
@@ -31,6 +33,7 @@ export const renderUsers = () => {
 
   replyComment();
   initLikeBtn();
+  delCommentById();
 };
 
 function replyComment() {
@@ -70,4 +73,15 @@ function initLikeBtn() {
       }, interval);
     });
   }
+}
+
+function delCommentById() {
+  const deleteBtn = document.querySelectorAll(".delete-comment-btn");
+
+  deleteBtn.forEach((button) => {
+    button.addEventListener("click", (id) => {
+      id = button.dataset.id;
+      deleteUserComments(id);
+    });
+  });
 }

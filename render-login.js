@@ -1,25 +1,5 @@
 export let setToken;
 
-// let authUsers = [];
-
-// const getAuthUsers = () => {
-//   fetch(baseAuthUrl)
-//     .then((response) => {
-//       return response.json();
-//     })
-//     .then((responseData) => {
-//       const appUsers = responseData.users.map((user) => {
-//         return {
-//           id: user.id,
-//           login: user.login,
-//           name: user.name,
-//         };
-//       });
-
-//       authUsers = appUsers;
-//     });
-// };
-
 export function renderAuthForm() {
   const loginForm = document.querySelector(".auth-form");
 

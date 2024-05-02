@@ -22,6 +22,7 @@ export function getUserComments() {
     .then((respData) => {
       const appComments = respData.comments.map((comment) => {
         return {
+          id: comment.id,
           name: comment.author.name,
           date: getFormatDate(comment.date),
           text: comment.text,
@@ -58,6 +59,20 @@ export function postUserComments(postTries = 2) {
     });
 }
 
+export function deleteUserComments(id) {
+  fetch("https://wedev-api.sky.pro/api/v2/artur-kochesoko/comments/" + id, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${setToken}`,
+    },
+  })
+    .then((response) => {
+      return response.json;
+    })
+    .then(getUserComments);
+}
+
+//error logs for api
 function initErrorLog(resp, postTries) {
   if (resp.status === 500) {
     if (postTries > 0) {

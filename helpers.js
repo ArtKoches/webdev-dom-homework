@@ -26,11 +26,10 @@ export function safeInput(str) {
 }
 
 export function addBtnValidate() {
-  authorsNameInput.value.trim() && authorsTextInput.value.trim()
+  authorsTextInput.value.trim()
     ? (addCommentBtn.disabled = false)
     : (addCommentBtn.disabled = true);
 
-  authorsNameInput.addEventListener("input", addBtnValidate);
   authorsTextInput.addEventListener("input", addBtnValidate);
 }
 
