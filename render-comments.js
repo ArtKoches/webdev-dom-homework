@@ -1,11 +1,9 @@
-import { users, deleteUserComments } from "./api.js";
-import { commentsList, authorsTextInput } from "./main.js";
+import { users, deleteUserComments, toggleLikeUserComments } from "./api.js";
+import { authorsTextInput, commentsList } from "./main.js";
 
-export const renderUsers = () => {
+const renderUsers = () => {
   const usersHtml = users
     .map((user, index) => {
-      const likeBtnClass = user.isLiked ? "-active-like" : "";
-
       return `<li class="comment">
       <div class="comment-header">
       <div>${user.name}</div>
@@ -18,8 +16,8 @@ export const renderUsers = () => {
       <div class="likes">
           <span class="likes-counter">${user.likes}</span>
           <button
-          class="like-button ${likeBtnClass}"
-          data-index="${index}"
+          class="${user.isLiked ? "like-button -active-like" : "like-button"}"  
+          data-id="${user.id}"
           ></button>
           <button class="quote-comment-btn" data-index="${index}"></button>
           <button class="delete-comment-btn" data-id="${user.id}"></button>
@@ -31,48 +29,31 @@ export const renderUsers = () => {
 
   commentsList.innerHTML = usersHtml;
 
-  replyComment();
   initLikeBtn();
+  replyComment();
   delCommentById();
 };
-
-function replyComment() {
-  const quoteBtn = document.querySelectorAll(".quote-comment-btn");
-
-  quoteBtn.forEach((button) => {
-    button.addEventListener("click", () => {
-      const index = button.dataset.index;
-      authorsTextInput.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END `;
-    });
-  });
-}
 
 function initLikeBtn() {
   const likeBtn = document.querySelectorAll(".like-button");
 
   likeBtn.forEach((button) => {
-    button.addEventListener("click", () => {
-      button.classList.add("-loading-like");
-
-      delay(2000).then(() => {
-        const index = button.dataset.index;
-
-        users[index].isLiked = !users[index].isLiked;
-
-        users[index].isLiked ? users[index].likes++ : users[index].likes--;
-
-        renderUsers();
-      });
+    button.addEventListener("click", (id) => {
+      id = button.dataset.id;
+      toggleLikeUserComments(id);
     });
   });
+}
 
-  function delay(interval = 300) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, interval);
+function replyComment() {
+  const quoteBtn = document.querySelectorAll(".quote-comment-btn");
+
+  quoteBtn.forEach((button) => {
+    button.addEventListener("click", (index) => {
+      index = button.dataset.index;
+      authorsTextInput.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END `;
     });
-  }
+  });
 }
 
 function delCommentById() {
@@ -85,3 +66,5 @@ function delCommentById() {
     });
   });
 }
+
+export { renderUsers };

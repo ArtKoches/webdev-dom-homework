@@ -1,6 +1,7 @@
-import { addCommentBtn, authorsTextInput, authorsNameInput } from "./main.js";
+import { authorsNameInput, authorsTextInput, addCommentBtn } from "./main.js";
+//imports
 
-export function getFormatDate(date) {
+function getFormatDate(date) {
   date = new Date(date)
     .toLocaleDateString("ru-RU", {
       day: "2-digit",
@@ -15,7 +16,7 @@ export function getFormatDate(date) {
   return date;
 }
 
-export function safeInput(str) {
+function safeInput(str) {
   return str
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -25,16 +26,11 @@ export function safeInput(str) {
     .replaceAll("QUOTE_END", "</div>");
 }
 
-export function addBtnValidate() {
-  authorsTextInput.value.trim()
-    ? (addCommentBtn.disabled = false)
-    : (addCommentBtn.disabled = true);
-
-  authorsTextInput.addEventListener("input", addBtnValidate);
-}
-
-export function resetInputType() {
+function resetInputType() {
   (authorsNameInput.value = ""),
     (authorsTextInput.value = ""),
     (addCommentBtn.disabled = true);
 }
+
+//exports
+export { getFormatDate, safeInput, resetInputType };

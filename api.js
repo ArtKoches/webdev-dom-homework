@@ -1,21 +1,25 @@
-import { setToken } from "./render-login.js";
-import { renderUsers } from "./render.js";
-import { getFormatDate, safeInput, resetInputType } from "./helpers.js";
 import {
+  baseUrl,
   preLoader,
-  addForm,
   authorsTextInput,
   authorsNameInput,
 } from "./main.js";
+import { getFormatDate, safeInput, resetInputType } from "./helpers.js";
+import { setToken } from "./render-auth-form.js";
+import { renderUsers } from "./render-comments.js";
+//imports
 
-const baseUrl = "https://wedev-api.sky.pro/api/v2/artur-kochesoko/comments";
+let users = [];
 
-export let users = [];
-
-export function getUserComments() {
+function getUserComments() {
   preLoader.classList.add("-loading-preloader");
 
-  fetch(baseUrl)
+  fetch(baseUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${setToken}`,
+    },
+  })
     .then((response) => {
       return response.json();
     })
@@ -23,11 +27,11 @@ export function getUserComments() {
       const appComments = respData.comments.map((comment) => {
         return {
           id: comment.id,
-          name: comment.author.name,
+          name: (authorsNameInput.value = comment.author.name),
           date: getFormatDate(comment.date),
           text: comment.text,
           likes: comment.likes,
-          isLiked: false,
+          isLiked: comment.isLiked,
         };
       });
 
@@ -39,7 +43,7 @@ export function getUserComments() {
     .finally(() => preLoader.classList.remove("-loading-preloader"));
 }
 
-export function postUserComments(postTries = 2) {
+function postUserComments(postTries = 2) {
   fetch(baseUrl, {
     method: "POST",
     headers: {
@@ -47,29 +51,39 @@ export function postUserComments(postTries = 2) {
     },
     body: JSON.stringify({
       text: safeInput(authorsTextInput.value),
-      name: safeInput(authorsNameInput.value),
     }),
   })
     .then((response) => initErrorLog(response, postTries))
     .then(getUserComments)
-    .catch(errorHandler)
-    .finally(() => {
-      preLoader.classList.remove("-loading-preloader");
-      addForm.classList.remove("-inactive-add-form");
-    });
+    .catch(errorHandler);
 }
 
-export function deleteUserComments(id) {
-  fetch("https://wedev-api.sky.pro/api/v2/artur-kochesoko/comments/" + id, {
+function deleteUserComments(id) {
+  fetch(`${baseUrl}/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${setToken}`,
     },
   })
     .then((response) => {
-      return response.json;
+      return response.json();
     })
-    .then(getUserComments);
+    .then(getUserComments)
+    .catch(errorHandler);
+}
+
+function toggleLikeUserComments(id) {
+  fetch(`${baseUrl}/${id}/toggle-like`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${setToken}`,
+    },
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then(getUserComments)
+    .catch(errorHandler);
 }
 
 //error logs for api
@@ -97,7 +111,16 @@ function errorHandler(err) {
 
   if (err.message === "Failed to fetch") {
     alert("Кажется, у вас сломался интернет, попробуйте позже");
-    addCommentBtn.disabled = true;
     throw new Error("Интернет отключен");
   }
 }
+
+//exports
+export {
+  users,
+  toggleLikeUserComments,
+  deleteUserComments,
+  postUserComments,
+  getUserComments,
+  errorHandler,
+};

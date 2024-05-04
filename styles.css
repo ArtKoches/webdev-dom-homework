@@ -135,9 +135,16 @@ body {
 }
 
 .add-form-name {
-  width: 300px;
+  font-size: 20px;
+  width: fit-content;
   padding: 11px 22px;
-  background-color: grey;
+  color: #202020;
+  background-color: rgba(222, 222, 222, 0.5);
+  cursor: auto;
+}
+
+.add-form-name:focus {
+  outline: 0;
 }
 
 .add-form-text {
@@ -193,7 +200,6 @@ body {
 }
 
 .preloader {
-  margin-top: 24px;
   display: none;
 }
 
@@ -202,8 +208,8 @@ body {
 }
 
 .preloader__img {
-  width: 72px;
-  height: 72px;
+  width: 100px;
+  height: 100px;
 }
 
 @keyframes rotating {
