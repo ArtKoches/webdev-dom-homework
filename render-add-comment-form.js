@@ -1,9 +1,14 @@
-import { addCommentBtn, authorsTextInput, addForm } from "./main.js";
+import { addForm } from "./main.js";
 import { postUserComments } from "./api.js";
+import { setUserName } from "./render-auth-form.js";
 //imports
 
+let commentText;
+let commentAddBtn;
+
 function renderAddCommentForm() {
-  const addFormHtml = `<input type="text" class="add-form-name" readonly />
+  const addFormHtml = `<input type="text" class="add-form-name" 
+  value="${setUserName}" readonly />
   <textarea
   type="textarea"
   class="add-form-text"
@@ -15,13 +20,27 @@ function renderAddCommentForm() {
     </div>`;
 
   addForm.innerHTML = addFormHtml;
-}
 
-function addComment() {
+  //comment add by key - "Enter"
+  addForm.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") {
+      addComment();
+    }
+  });
+
+  const authorsTextInput = document.querySelector(".add-form-text");
+  const addCommentBtn = document.querySelector(".add-form-button");
+
   authorsTextInput.addEventListener("input", addCommentInpCheck);
   addCommentBtn.addEventListener("click", addComment);
 
-  if (!authorsTextInput.value.trim()) {
+  //global variables for next use in other modules
+  commentText = authorsTextInput;
+  commentAddBtn = addCommentBtn;
+}
+
+function addComment() {
+  if (!commentText.value.trim()) {
     return;
   }
 
@@ -29,16 +48,10 @@ function addComment() {
 }
 
 function addCommentInpCheck() {
-  authorsTextInput.value.trim()
-    ? (addCommentBtn.disabled = false)
-    : (addCommentBtn.disabled = true);
-}
-
-function commentAddByKey() {
-  addForm.addEventListener("keyup", (event) =>
-    event.key === "Enter" ? addComment() : ""
-  );
+  commentText.value.trim()
+    ? (commentAddBtn.disabled = false)
+    : (commentAddBtn.disabled = true);
 }
 
 //exports
-export { commentAddByKey, addComment, renderAddCommentForm };
+export { renderAddCommentForm, commentText, commentAddBtn };

@@ -1,8 +1,5 @@
-import { renderAddCommentForm } from "./render-add-comment-form.js";
-import { renderAuthForm } from "./render-auth-form.js";
-import { renderRegForm } from "./render-register-form.js";
-import { addComment, commentAddByKey } from "./render-add-comment-form.js";
 import { getUserComments } from "./api.js";
+import { renderAuthForm } from "./render-auth-form.js";
 //imports
 
 const baseUrl = "https://wedev-api.sky.pro/api/v2/art-koches/comments";
@@ -10,31 +7,33 @@ const baseAuthUrl = "https://wedev-api.sky.pro/api/user";
 //fetch base urls
 
 const addForm = document.querySelector(".add-form");
+const authForm = document.querySelector(".auth-form");
+const regForm = document.querySelector(".reg-form");
 const commentsList = document.querySelector(".comments");
 const preLoader = document.querySelector(".preloader");
 
-renderAddCommentForm();
-renderAuthForm();
-renderRegForm();
+const authFollowText = document.querySelector(".follow-auth-text");
+const authLink = document.querySelector(".auth-link");
 
-const authorsTextInput = document.querySelector(".add-form-text");
-const addCommentBtn = document.querySelector(".add-form-button");
-const authorsNameInput = document.querySelector(".add-form-name");
+//go to the authtorization form link
+authLink.addEventListener("click", () => {
+  renderAuthForm();
+  authForm.classList.add("element-visibility-flex");
+  authFollowText.classList.add("element-visibility-none");
+  commentsList.classList.add("element-visibility-none");
+});
 
 getUserComments();
-addComment();
-commentAddByKey();
 
 //exports
 export {
+  authForm,
+  regForm,
   baseUrl,
   baseAuthUrl,
-  commentsList,
   addForm,
+  commentsList,
   preLoader,
-  addCommentBtn,
-  authorsNameInput,
-  authorsTextInput,
 };
 
 //test

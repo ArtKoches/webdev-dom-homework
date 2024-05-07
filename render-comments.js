@@ -1,5 +1,7 @@
 import { users, deleteUserComments, toggleLikeUserComments } from "./api.js";
-import { authorsTextInput, commentsList } from "./main.js";
+import { commentsList } from "./main.js";
+import { commentText } from "./render-add-comment-form.js";
+//imports
 
 const renderUsers = () => {
   const usersHtml = users
@@ -23,7 +25,7 @@ const renderUsers = () => {
           <button class="delete-comment-btn" data-id="${user.id}"></button>
           </div>
           </div>
-    </li>`;
+      </li>`;
     })
     .join("");
 
@@ -51,7 +53,7 @@ function replyComment() {
   quoteBtn.forEach((button) => {
     button.addEventListener("click", (index) => {
       index = button.dataset.index;
-      authorsTextInput.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END `;
+      commentText.value = `QUOTE_BEGIN ${users[index].name}: \n ${users[index].text} QUOTE_END `;
     });
   });
 }

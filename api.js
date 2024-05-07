@@ -1,12 +1,8 @@
-import {
-  baseUrl,
-  preLoader,
-  authorsTextInput,
-  authorsNameInput,
-} from "./main.js";
-import { getFormatDate, safeInput, resetInputType } from "./helpers.js";
-import { setToken } from "./render-auth-form.js";
+import { baseUrl, preLoader } from "./main.js";
 import { renderUsers } from "./render-comments.js";
+import { setToken } from "./render-auth-form.js";
+import { commentText } from "./render-add-comment-form.js";
+import { getFormatDate, safeInput, resetInputType } from "./helpers.js";
 //imports
 
 let users = [];
@@ -27,7 +23,7 @@ function getUserComments() {
       const appComments = respData.comments.map((comment) => {
         return {
           id: comment.id,
-          name: (authorsNameInput.value = comment.author.name),
+          name: comment.author.name,
           date: getFormatDate(comment.date),
           text: comment.text,
           likes: comment.likes,
@@ -50,7 +46,7 @@ function postUserComments(postTries = 2) {
       Authorization: `Bearer ${setToken}`,
     },
     body: JSON.stringify({
-      text: safeInput(authorsTextInput.value),
+      text: safeInput(commentText.value),
     }),
   })
     .then((response) => initErrorLog(response, postTries))
@@ -65,9 +61,7 @@ function deleteUserComments(id) {
       Authorization: `Bearer ${setToken}`,
     },
   })
-    .then((response) => {
-      return response.json();
-    })
+    .then(initErrorLog)
     .then(getUserComments)
     .catch(errorHandler);
 }
@@ -79,9 +73,7 @@ function toggleLikeUserComments(id) {
       Authorization: `Bearer ${setToken}`,
     },
   })
-    .then((response) => {
-      return response.json();
-    })
+    .then(initErrorLog)
     .then(getUserComments)
     .catch(errorHandler);
 }
@@ -100,6 +92,9 @@ function initErrorLog(resp, postTries) {
   } else if (resp.status === 400) {
     alert("Имя и комментарий должны быть не короче 3 символов");
     throw new Error("Плохой запрос");
+  } else if (resp.status === 401) {
+    alert("Вы не авторизованы, войдите в свой аккаунт или зарегистрируйтесь");
+    throw new Error("Нет авторизации");
   } else {
     resetInputType();
     return resp.json();

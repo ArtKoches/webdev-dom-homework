@@ -1,4 +1,4 @@
-import { authorsNameInput, authorsTextInput, addCommentBtn } from "./main.js";
+import { commentText, commentAddBtn } from "./render-add-comment-form.js";
 //imports
 
 function getFormatDate(date) {
@@ -27,9 +27,7 @@ function safeInput(str) {
 }
 
 function resetInputType() {
-  (authorsNameInput.value = ""),
-    (authorsTextInput.value = ""),
-    (addCommentBtn.disabled = true);
+  (commentText.value = ""), (commentAddBtn.disabled = true);
 }
 
 //exports

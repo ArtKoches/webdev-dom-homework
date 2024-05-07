@@ -1,4 +1,4 @@
-import { preLoader, baseAuthUrl } from "./main.js";
+import { authForm, regForm, preLoader, baseAuthUrl } from "./main.js";
 import { errorHandler } from "./api.js";
 //imports
 
@@ -8,9 +8,10 @@ function renderRegForm() {
   const regHtml = `<h1>Регистрация</h1>
     <input type="text" class="reg-form__login" placeholder="Логин" />
     <input type="text" class="reg-form__name" placeholder="Имя" />
-    <input type="text" class="reg-form__password" placeholder="Пароль" />
+    <input type="password" class="reg-form__password" placeholder="Пароль" />
     <div class="login-buttons">
       <button class="login-buttons__create" disabled>Создать аккаунт</button>
+      <button id="back-auth-form" class="login-buttons__enter">Войти</button>
     </div>`;
 
   registerForm.innerHTML = regHtml;
@@ -19,11 +20,18 @@ function renderRegForm() {
   const regNameInput = document.querySelector(".reg-form__name");
   const regPassInput = document.querySelector(".reg-form__password");
   const createUserBtn = document.querySelector(".login-buttons__create");
+  const loginUserBtn = document.getElementById("back-auth-form");
 
   regLoginInput.addEventListener("input", regInpCheck);
   regNameInput.addEventListener("input", regInpCheck);
   regPassInput.addEventListener("input", regInpCheck);
   createUserBtn.addEventListener("click", postAuthUsers);
+
+  //back to authtorization form
+  loginUserBtn.addEventListener("click", () => {
+    regForm.classList.remove("element-visibility-flex");
+    authForm.classList.add("element-visibility-flex");
+  });
 
   function postAuthUsers() {
     preLoader.classList.add("-loading-preloader");
@@ -37,8 +45,14 @@ function renderRegForm() {
       }),
     })
       .then(postAuthErrorLog)
+      .then(() => {
+        regForm.classList.remove("element-visibility-flex");
+        authForm.classList.add("element-visibility-flex");
+      })
       .catch(errorHandler)
-      .finally(() => preLoader.classList.remove("-loading-preloader"));
+      .finally(() => {
+        preLoader.classList.remove("-loading-preloader");
+      });
   }
 
   function regInpCheck() {
