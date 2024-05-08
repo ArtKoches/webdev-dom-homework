@@ -8,7 +8,7 @@ import { getFormatDate, safeInput, resetInputType } from "./helpers.js";
 let users = [];
 
 function getUserComments() {
-  preLoader.classList.add("-loading-preloader");
+  preLoader.classList.add("preloader-visible");
 
   fetch(baseUrl, {
     method: "GET",
@@ -36,7 +36,7 @@ function getUserComments() {
       renderUsers();
     })
     .catch(errorHandler)
-    .finally(() => preLoader.classList.remove("-loading-preloader"));
+    .finally(() => preLoader.classList.remove("preloader-visible"));
 }
 
 function postUserComments(postTries = 2) {

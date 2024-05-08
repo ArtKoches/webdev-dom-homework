@@ -34,8 +34,6 @@ function renderRegForm() {
   });
 
   function postAuthUsers() {
-    preLoader.classList.add("-loading-preloader");
-
     fetch(baseAuthUrl, {
       method: "POST",
       body: JSON.stringify({
@@ -49,10 +47,7 @@ function renderRegForm() {
         regForm.classList.remove("element-visibility-flex");
         authForm.classList.add("element-visibility-flex");
       })
-      .catch(errorHandler)
-      .finally(() => {
-        preLoader.classList.remove("-loading-preloader");
-      });
+      .catch(errorHandler);
   }
 
   function regInpCheck() {

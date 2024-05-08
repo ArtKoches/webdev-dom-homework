@@ -44,8 +44,6 @@ function renderAuthForm() {
   });
 
   function authUser() {
-    preLoader.classList.add("-loading-preloader");
-
     fetch(`${baseAuthUrl}/login`, {
       method: "POST",
       body: JSON.stringify({
@@ -64,8 +62,7 @@ function renderAuthForm() {
         addForm.classList.add("element-visibility-flex");
         commentsList.classList.remove("element-visibility-none");
       })
-      .catch(errorHandler)
-      .finally(() => preLoader.classList.remove("-loading-preloader"));
+      .catch(errorHandler);
   }
 
   function authInpCheck() {

@@ -72,7 +72,7 @@ body {
 }
 
 .quote-comment-btn {
-  background-image: url("quote-icon-btn.svg");
+  background-image: url("./img/quote-icon-btn.svg");
   background-size: contain;
   background-repeat: no-repeat;
   width: 26px;
@@ -80,7 +80,7 @@ body {
 }
 
 .delete-comment-btn {
-  background-image: url("delete-icon-btn.svg");
+  background-image: url("./img/delete-icon-btn.svg");
   background-size: contain;
   background-repeat: no-repeat;
   width: 26px;
@@ -196,15 +196,17 @@ body {
 }
 
 .preloader {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
   display: none;
+  background: url("./img/preloader-img.gif") no-repeat center;
+  background-color: #20202070;
+  z-index: 1;
+  transition: all 0.5s;
 }
 
-.preloader__img {
-  width: 100%;
-  height: 100%;
-}
-
-.-loading-preloader {
+.preloader-visible {
   display: block;
 }
 
