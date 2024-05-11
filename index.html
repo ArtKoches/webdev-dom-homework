@@ -1,44 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-
-  <body>
-    <div class="container">
-      <ul id="comments-list" class="comments">
-        <!-- Теперь список рендерится из JS на основе массива данных -->
-      </ul>
-      <div class="preloader">
-        <img class="preloader__img" src="preloader-img.svg" alt="Loading" />
-      </div>
-      <div class="add-form">
-        <input
-          id="user-name"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
+    <head>
+        <title>Проект "Комменты"</title>
+        <meta charset="utf-8" />
+        <link
+            rel="shortcut icon"
+            href="./img/favicon.ico"
+            type="image/x-icon"
         />
-        <textarea
-          id="user-comment"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="comment-btn" class="add-form-button" disabled>
-            Написать
-          </button>
-          <button id="del-comment-btn" class="del-form-button">
-            Удалить последний комментарий
-          </button>
-        </div>
-      </div>
-    </div>
-  </body>
+        <link rel="stylesheet" href="./src/styles.css" />
+    </head>
 
-  <script src="script.js" defer></script>
+    <body>
+        <div class="preloader"></div>
+        <div class="container">
+            <ul class="comments"></ul>
+            <a class="follow-auth-text" href="#"
+                >Чтобы добавить комментарий,
+                <span class="auth-link">авторизуйтесь</span></a
+            >
+            <div class="add-form"></div>
+            <div class="auth-form"></div>
+            <div class="reg-form"></div>
+        </div>
+    </body>
+
+    <script src="./dist/main.js"></script>
 </html>
